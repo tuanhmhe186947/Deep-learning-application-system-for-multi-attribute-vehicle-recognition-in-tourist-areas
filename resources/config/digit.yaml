@@ -1,0 +1,29 @@
+# Config model recognize
+WEIGHT: "resources/weight/last_digit_s_10012025_sz256.pt"
+CLASSES: null
+CONF: 0.5
+IMGSZ: 256
+DEVICE: "0"
+AGNOSTIC_NMS: true
+HALF: false
+
+# Const conf plate square
+CONF_PLATE_SQUARE: 0.85
+
+# style text recognize
+PLATE_STYLE: ["NNCNNNNN", "NNCNNNNNN", "CCNNNN", "NNCNNNN", "NNCCNNNN", "NNNNNCC", "NNNNNCN", "NNNNNCCNN", "NNCCNNNNN", "NNCCNNNNNN"]
+PLATE_STYLE_CAR: ["NNCNNNN", "NNCNNNNN", "NNCCNNNNN", "CCNNNN", "CCNNN", "NNNNNCCNN", "NNCCNNNN"]
+PLATE_STYLE_MOTO: ["NNCNNNNN", "NNCNNNNNN", "NNNNNCC", "NNCCNNNN", "NNCCNNNNN", "NNCCNNNNNN", "NNNNNCN"]
+# TEXT_CAR: ["LB", "LD", "CD", "KT"]
+DIGIT_CAR: ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "44", "45", "46", "87", "91", "96"]
+STYLE_ALPHA_CAR: ["NNNNN", "NNC", "CNN", "NNCC"]
+ALPHA_ARMY: [
+              "AA", "AB", "AC", "AD", "AM", "AN", "AT", "AV",
+              "BB", "BC", "BH", "BK", "BL", "BP", "BT",
+              "CA", "CB", "CC", "CD", "CH", "CM", "CN", "CP", "CT", "CV",
+              "HA", "HB", "HC", "HD", "HE", "HH", "HN", "HQ", "HT",
+              "KA", "KB", "KC", "KD", "KK", "KP", "KT", "KV",
+              "PA", "PG", "PK", "PM", "PQ", "PX", "PP-10", "PP-40", "PP-60",
+              "QA", "QB", "QC", "QH", "QM",
+              "TA", "TC", "TH", "TK", "TM", "TN", "TT", "VT"
+            ]

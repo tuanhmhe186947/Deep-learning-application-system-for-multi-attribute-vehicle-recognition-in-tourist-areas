@@ -1,0 +1,10 @@
+# Config model vehicle
+WEIGHT: "resources/weight/last_17h16_24_09_yolov11_detect.pt"
+CLASSES: [0, 1, 2, 3]
+CONF: 0.7
+IMGSZ: 640
+DEVICE: "0"
+AGNOSTIC_NMS: true
+HALF: false
+
+

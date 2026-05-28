@@ -1,0 +1,66 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local environment
+.env
+.env.*
+!.env.example
+
+# Runtime artifacts
+output/
+storage/
+reports/
+resources/logs/
+*.log
+*.csv
+*.xlsx
+
+# AI model binaries and experiment outputs
+*.pt
+*.pth
+*.onnx
+*.engine
+*.torchscript
+*.tflite
+*.mlmodel
+runs/
+wandb/
+datasets/
+data/
+
+# Local sample/export images
+image*.png
+*.jpg
+*.jpeg
+*.bmp
+*.webp
+
+# Notebooks
+.ipynb_checkpoints/
+notebooks/**/.ipynb_checkpoints/
+
+# Vendored tracker demo outputs
+sources/yolov5/trackers/strong_sort/results/
+
+# Keep model directory documentation
+!resources/weight/
+!resources/weight/README.md
+!resources/weight/.gitkeep
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -1,0 +1,8 @@
+# Config model vehicle
+WEIGHT: "resources/weight/last_plate_hama_sz640.pt"
+CLASSES: [0]
+CONF: 0.7
+IMGSZ: 640
+DEVICE: "0"
+AGNOSTIC_NMS: true
+HALF: false
