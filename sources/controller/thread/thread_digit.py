@@ -2,9 +2,10 @@ from pathlib import Path
 
 from loguru import logger
 
-from ...config import ROOT
-from ...util.common import img_2_base64
-from ...util.function import (
+from sources.config import ROOT
+from sources.models.digit_config import digit_config
+from sources.util.common import img_2_base64
+from sources.util.function import (
     check_alpha_digit,
     filter_text_digit,
     get_angle,
@@ -12,21 +13,16 @@ from ...util.function import (
     process_square_lp,
     rotate,
 )
-from ...yolov5.detect import Detection
-from sources.models.digit_config import digit_config
+from sources.yolov5.detect import Detection
 
 
 class ThreadDigit:
     def __init__(self):
-        super().__init__()
-
         self.logger = logger.bind(component="digit_detector")
         self.detect_digit = Detection(dnn=False)
         self.digit_config = digit_config
 
         self.plate_style = self.digit_config.PLATE_STYLE
-        self.plate_style_car = self.digit_config.PLATE_STYLE_CAR
-        self.plate_style_moto = self.digit_config.PLATE_STYLE_MOTO
         self.digit_car = self.digit_config.DIGIT_CAR
         self.alpha_car = self.digit_config.ALPHA_ARMY
 
@@ -49,6 +45,9 @@ class ThreadDigit:
         self.logger.info("Digit OCR model loaded")
 
     def digit(self, img_plate):
+        if img_plate is None or img_plate.size == 0:
+            return "", -1, img_plate, 0.0
+
         result_cur = self.detect_digit.detect(img=img_plate)
         angle = get_angle(img_plate, result_cur)
         rotated = rotate(img_plate, angle)
@@ -70,7 +69,7 @@ class ThreadDigit:
             if not isinstance(conf_val, (int, float)):
                 conf_val = 0.0
             confs.append(conf_val)
-            digits = digits + str(label)
+            digits += str(label)
 
         conf_score = float(min(confs)) if len(confs) else 0.0
         return digits.upper(), type_plate, img_plate, conf_score
@@ -78,6 +77,8 @@ class ThreadDigit:
     def reg_digit(self, img_plate):
         try:
             digits, type_plate, img, conf_score = self.digit(img_plate)
+            if not digits:
+                return "", type_plate, img_2_base64(img_plate), conf_score
             if filter_text_digit(digits, self.plate_style):
                 if check_alpha_digit(digits, self.digit_car, self.alpha_car):
                     return digits, type_plate, img_2_base64(img), conf_score

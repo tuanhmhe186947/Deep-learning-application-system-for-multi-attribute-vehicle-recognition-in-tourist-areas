@@ -1,6 +1,7 @@
-from ultralytics import YOLO
 from pathlib import Path
+
 from loguru import logger
+from ultralytics import YOLO
 
 from ...config import ROOT
 from sources.models import VehicleConfig
@@ -31,18 +32,40 @@ class ThreadVehicle:
         self.names = self.__detect_vehicle.names
         self.logger.info("Vehicle detection model loaded")
 
-    def setup_plate(self):
-        self.setup_vehicle()
+    def _class_name(self, class_id):
+        if isinstance(self.names, dict):
+            return self.names.get(class_id, str(class_id))
+        if isinstance(self.names, (list, tuple)) and 0 <= class_id < len(self.names):
+            return self.names[class_id]
+        return str(class_id)
+
+    @staticmethod
+    def _filter_sets(class_filter):
+        filter_ids = set()
+        filter_names = set()
+
+        if class_filter is None:
+            return filter_ids, filter_names
+
+        values = class_filter if isinstance(class_filter, (list, tuple, set)) else [class_filter]
+        for value in values:
+            if isinstance(value, str):
+                filter_names.add(value)
+            elif isinstance(value, (int, float)):
+                filter_ids.add(int(value))
+
+        return filter_ids, filter_names
 
     def detect_vehicle(self, image, class_filter=None):
         try:
+            filter_ids, filter_names = self._filter_sets(class_filter)
             results = self.__detect_vehicle.predict(
                 image,
                 conf=self.conf,
                 imgsz=self.imgsz,
                 classes=self.classes,
                 device=self.device,
-                verbose=False
+                verbose=False,
             )
 
             detect_list = []
@@ -52,21 +75,12 @@ class ThreadVehicle:
                     x1, y1, x2, y2 = box.xyxy[0].cpu().numpy()
                     conf = float(box.conf[0])
                     cls = int(box.cls[0])
-                    class_name = self.names[cls]
-                    detect_list.append([int(x1), int(y1), int(x2), int(y2), class_name, conf])
-
-            if class_filter:
-                name_filter = set()
-                if isinstance(class_filter, (list, tuple, set)):
-                    for c in class_filter:
-                        if isinstance(c, str):
-                            name_filter.add(c)
-                        elif isinstance(c, (int, float)):
-                            idx = int(c)
-                            if idx in self.names:
-                                name_filter.add(self.names[idx])
-                if name_filter:
-                    detect_list = [r for r in detect_list if len(r) > 4 and r[4] in name_filter]
+                    class_name = self._class_name(cls)
+                    if filter_ids and cls not in filter_ids:
+                        continue
+                    if filter_names and class_name not in filter_names:
+                        continue
+                    detect_list.append([int(x1), int(y1), int(x2), int(y2), class_name, conf, cls])
 
             return detect_list
 

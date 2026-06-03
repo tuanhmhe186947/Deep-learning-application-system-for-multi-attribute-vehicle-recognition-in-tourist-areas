@@ -1,0 +1,7 @@
+services:
+  api:
+    gpus: all
+    environment:
+      VEHICLE_DEVICE: ${VEHICLE_DEVICE:-0}
+      PLATE_DEVICE: ${PLATE_DEVICE:-0}
+      DIGIT_DEVICE: ${DIGIT_DEVICE:-0}

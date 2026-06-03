@@ -1,1 +1,3 @@
-from .recognize import Recognize
+from sources.controller.recognize.recognize import Recognize
+
+__all__ = ["Recognize"]

@@ -1,11 +1,13 @@
-# Model Weights
+Model weights are not committed to Git.
 
-Large model binaries are intentionally ignored by Git.
+Place the runtime model files here, or update the paths in:
 
-Place the required files in this directory, or update the YAML files in `resources/config/`:
+- `resources/config/vehicle.yaml`
+- `resources/config/plate.yaml`
+- `resources/config/digit.yaml`
 
-- `last_17h16_24_09_yolov11_detect.pt` for vehicle detection
-- `last_plate_hama_sz640.pt` for license plate detection
-- `last_digit_s_10012025_sz256.pt` for license plate OCR
+Current default filenames:
 
-For public GitHub releases, publish weights through GitHub Releases, Git LFS, or external model storage, then document the download links in the main README.
+- `last_17h16_24_09_yolov11_detect.pt`
+- `last_plate_hama_sz640.pt`
+- `last_digit_s_10012025_sz256.pt`

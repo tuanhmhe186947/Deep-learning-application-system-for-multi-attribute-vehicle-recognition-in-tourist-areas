@@ -27,7 +27,7 @@ class DigitConfig:
     ALPHA_ARMY: Optional[List[str]] = None
 
     def __post_init__(self):
-        data = load_yaml_config("digit.yaml", env_var="DIGIT_CONFIG_PATH")
+        data = load_yaml_config("digit.yaml", env_var="DIGIT_CONFIG_PATH", env_prefix="DIGIT")
         for key, value in data.items():
             setattr(self, key, value)
     

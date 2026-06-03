@@ -25,7 +25,7 @@ class MainConfig:
     ROOT_STORAGE: Optional[str] = None
 
     def __post_init__(self):
-        data = load_yaml_config("main.yaml", env_var="MAIN_CONFIG_PATH")
+        data = load_yaml_config("main.yaml", env_var="MAIN_CONFIG_PATH", env_prefix="MAIN")
         for key, value in data.items():
             setattr(self, key, value)
     

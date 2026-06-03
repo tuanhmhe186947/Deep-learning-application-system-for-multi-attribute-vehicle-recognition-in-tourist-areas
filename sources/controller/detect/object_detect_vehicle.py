@@ -3,7 +3,6 @@ from sources.controller.thread.thread_vehicle import ThreadVehicle
 
 class DetectVehicle:
     def __init__(self):
-        super().__init__()
         self.detect_vehicle = ThreadVehicle()
 
     def detect(self, image, class_filter=None):

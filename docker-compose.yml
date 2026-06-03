@@ -1,0 +1,23 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: multi-task-vehicle-recognition:latest
+    container_name: vehicle-recognition-api
+    ports:
+      - "8484:8484"
+    environment:
+      PYTHONUNBUFFERED: "1"
+      MAIN_CONFIG_PATH: resources/config/main.yaml
+      VEHICLE_CONFIG_PATH: resources/config/vehicle.yaml
+      PLATE_CONFIG_PATH: resources/config/plate.yaml
+      DIGIT_CONFIG_PATH: resources/config/digit.yaml
+      VEHICLE_DEVICE: ${VEHICLE_DEVICE:-cpu}
+      PLATE_DEVICE: ${PLATE_DEVICE:-cpu}
+      DIGIT_DEVICE: ${DIGIT_DEVICE:-cpu}
+    volumes:
+      - ./resources:/app/resources
+      - ./output:/app/output
+      - ./storage:/app/storage
+    restart: unless-stopped

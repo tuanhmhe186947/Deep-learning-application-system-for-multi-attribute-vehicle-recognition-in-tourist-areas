@@ -4,20 +4,61 @@ import numpy as np
 from sources.models.digit_config import digit_config
 
 
-def max_size_boundingbox(list_bbox) -> list:
-    max_bbox = 0
-    id_key = 0
-    if not len(list_bbox):
+def normalize_bbox(bbox) -> list:
+    if bbox is None or len(bbox) < 4:
         return []
 
-    for i, bbox in enumerate(list_bbox):
-        x1, y1, x2, y2 = bbox[:4]
-        size = abs((x1 - x2) * (y1 - y2))
-        if size > max_bbox:
-            max_bbox = size
-            id_key = i
+    try:
+        return [int(round(float(value))) for value in bbox[:4]]
+    except (TypeError, ValueError):
+        return []
 
-    return list_bbox[id_key]
+
+def bbox_area(bbox) -> int:
+    box = normalize_bbox(bbox)
+    if not box:
+        return 0
+
+    x1, y1, x2, y2 = box
+    return max(0, x2 - x1) * max(0, y2 - y1)
+
+
+def clip_bbox(bbox, image_shape, padding=0) -> list:
+    box = normalize_bbox(bbox)
+    if not box or image_shape is None or len(image_shape) < 2:
+        return []
+
+    height, width = image_shape[:2]
+    x1, y1, x2, y2 = box
+    x1 = max(0, x1 - padding)
+    y1 = max(0, y1 - padding)
+    x2 = min(width, x2 + padding)
+    y2 = min(height, y2 + padding)
+
+    if x2 <= x1 or y2 <= y1:
+        return []
+
+    return [x1, y1, x2, y2]
+
+
+def crop_bbox(image, bbox, padding=0):
+    box = clip_bbox(bbox, image.shape if image is not None else None, padding=padding)
+    if not box:
+        return None, []
+
+    x1, y1, x2, y2 = box
+    crop = image[y1:y2, x1:x2]
+    if crop is None or crop.size == 0:
+        return None, []
+
+    return crop, box
+
+
+def max_size_boundingbox(list_bbox) -> list:
+    if not list_bbox:
+        return []
+
+    return max(list_bbox, key=bbox_area)
 
 
 def check_plate(style, plate) -> bool:
@@ -162,12 +203,15 @@ def is_square_lp(id_list) -> bool:
     list_x = []
     length_digit = 0
     for result in id_list:
-        x1, _, x2, _, _, _ = result
+        box = normalize_bbox(result)
+        if not box:
+            continue
+        x1, _, x2, _ = box
         list_x.append(x1)
         list_x.append(x2)
         length_digit += x2 - x1
 
-    if length_digit <= 0:
+    if length_digit <= 0 or len(list_x) < 2:
         return False
 
     list_x.sort()

@@ -16,7 +16,7 @@ class PlateConfig:
     HALF: Optional[bool] = None
 
     def __post_init__(self):
-        data = load_yaml_config("plate.yaml", env_var="PLATE_CONFIG_PATH")
+        data = load_yaml_config("plate.yaml", env_var="PLATE_CONFIG_PATH", env_prefix="PLATE")
         for key, value in data.items():
             setattr(self, key, value)
     

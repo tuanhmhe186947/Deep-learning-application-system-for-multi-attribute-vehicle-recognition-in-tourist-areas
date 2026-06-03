@@ -1,15 +1,10 @@
-# name run file
+# Application config
 NAME: "main"
-
-# Config application
-HOST: "127.0.0.1"
+HOST: "0.0.0.0"
 PORT: 8484
 WORKER: 1
-RELOAD: FALSE
+RELOAD: false
 
-# path file log
 FILE_LOG: "resources/logs/app.log"
 TIMEOUT_KEEP_ALIVE: 5
-
-# storage
 ROOT_STORAGE: "storage"

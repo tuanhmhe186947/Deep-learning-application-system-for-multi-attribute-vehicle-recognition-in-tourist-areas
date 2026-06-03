@@ -8,10 +8,11 @@ __pycache__/
 .coverage
 htmlcov/
 
-# Virtual environments
+# Virtual environments and local caches
 .venv/
 venv/
 env/
+.uv-cache/
 
 # Local environment
 .env
@@ -39,8 +40,10 @@ runs/
 wandb/
 datasets/
 data/
+data_digit_hino/
 
 # Local sample/export images
+image_test/
 image*.png
 *.jpg
 *.jpeg

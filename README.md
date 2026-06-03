@@ -6,9 +6,13 @@ FastAPI service for vehicle detection, license plate detection, and license plat
 
 - Detect cars: `POST /detect/car`
 - Detect motorcycles: `POST /detect/moto`
+- Detect all configured vehicles: `POST /detect/vehicle`
 - Detect license plates: `POST /detect/plate`
 - Recognize cropped license plate text: `POST /ocr/plate`
+- Detect and recognize the best plate in a full image: `POST /recognize/plate`
+- Detect, recognize, and store images: `POST /recognize/plate/store`
 - Health check: `GET /health`
+- Readiness/config check: `GET /ready`
 
 ## Repository Layout
 
@@ -59,7 +63,7 @@ Model binaries are not tracked in Git. Put the required files in `resources/weig
 - `resources/config/plate.yaml`
 - `resources/config/digit.yaml`
 
-Current expected filenames are documented in `resources/weight/README.md`.
+Current expected filenames are set in `resources/config/vehicle.yaml`, `resources/config/plate.yaml`, and `resources/config/digit.yaml`.
 
 ## Run API
 
@@ -73,6 +77,44 @@ Open API docs:
 http://127.0.0.1:8484/docs
 ```
 
+## Run With Docker
+
+Build and start the API:
+
+```bash
+docker compose up --build
+```
+
+The API is exposed at:
+
+```text
+http://127.0.0.1:8484
+```
+
+`docker-compose.yml` mounts `resources/`, `output/`, and `storage/` from the host into the container. Keep model weights in `resources/weight/` and edit `resources/config/*.yaml` when changing weight names, confidence thresholds, image sizes, or device settings.
+
+The default Docker config uses CPU inference:
+
+```yaml
+DEVICE: "cpu"
+```
+
+For NVIDIA GPU inference, install NVIDIA Container Toolkit, run Docker with GPU access, and change `DEVICE` in the model config YAML files to `"0"` or the target CUDA device.
+
+You can also use the GPU compose override:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.gpu.yml up --build
+```
+
+Set a specific device with `.env` or environment variables:
+
+```text
+VEHICLE_DEVICE=0
+PLATE_DEVICE=0
+DIGIT_DEVICE=0
+```
+
 ## Request Format
 
 All inference endpoints accept:
@@ -84,6 +126,17 @@ All inference endpoints accept:
 ```
 
 The `image` value may be raw base64 or a `data:image/...;base64,...` URI.
+
+`POST /recognize/plate` accepts the same `image` field plus optional `cameraId`:
+
+```json
+{
+  "cameraId": 1,
+  "image": "/9j/..."
+}
+```
+
+`POST /recognize/plate/store` also accepts optional `imageOverview`; saved files are written under `storage/`.
 
 ## Smoke Test
 
@@ -113,8 +166,6 @@ python -m sources.training.train_ocr_license_plate evaluate \
   --val-images datasets/data_digit_hino/val/images \
   --val-labels datasets/data_digit_hino/val/labels
 ```
-
-More details: `docs/TRAINING_OCR.md`.
 
 ## GitHub Notes
 

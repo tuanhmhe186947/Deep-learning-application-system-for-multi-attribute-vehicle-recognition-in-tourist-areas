@@ -16,7 +16,7 @@ class VehicleConfig:
     HALF: Optional[bool] = None
 
     def __post_init__(self):
-        data = load_yaml_config("vehicle.yaml", env_var="VEHICLE_CONFIG_PATH")
+        data = load_yaml_config("vehicle.yaml", env_var="VEHICLE_CONFIG_PATH", env_prefix="VEHICLE")
         for key, value in data.items():
             setattr(self, key, value)
     

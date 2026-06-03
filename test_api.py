@@ -71,6 +71,11 @@ def test_image(path, host, output_dir):
         print(plate_res)
         img = draw_boxes(img, plate_boxes, (0, 0, 255), "plate")
 
+    recognize_res = call_api(host, "/recognize/plate", image_b64)
+    if recognize_res:
+        print("\n[PLATE RECOGNIZE]")
+        print(recognize_res)
+
     for idx, plate in enumerate(plate_boxes):
         x1, y1, x2, y2 = map(int, plate["bbox"])
         if x2 <= x1 or y2 <= y1:

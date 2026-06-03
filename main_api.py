@@ -1,9 +1,10 @@
 import time
+
 from fastapi import FastAPI
 
-from sources.util.common import set_logger
 from sources.controller.main_controller import api_controller
-from sources.models import DataRequest, MainConfig
+from sources.models import AppDataRequest, DataRequest, MainConfig
+from sources.util.common import set_logger
 
 
 app = FastAPI(
@@ -19,6 +20,19 @@ time_logger = set_logger(key="timer_log")
 @app.get("/health", tags=["System"])
 async def health_check():
     return {"status": "ok"}
+
+
+@app.get("/ready", tags=["System"])
+async def readiness_check():
+    return api_controller.readiness()
+
+
+@app.post("/detect/vehicle", description="Detect all configured vehicles", tags=["Detect"])
+async def detect_vehicle(payload: DataRequest):
+    start = time.time()
+    result = await api_controller.detect_vehicle_api(payload)
+    time_logger.info(f"vehicle_detect {round(time.time() - start, 5)}s")
+    return result
 
 
 @app.post("/detect/car", description="Detect cars", tags=["Detect"])
@@ -50,6 +64,26 @@ async def ocr_plate(payload: DataRequest):
     start = time.time()
     result = await api_controller.ocr_plate(payload)
     time_logger.info(f"plate_ocr {round(time.time() - start, 5)}s")
+    return result
+
+
+@app.post("/recognize/plate", description="Detect and recognize the best license plate", tags=["Recognize"])
+async def recognize_plate(payload: AppDataRequest):
+    start = time.time()
+    result = await api_controller.recognize_plate(payload)
+    time_logger.info(f"plate_recognize {round(time.time() - start, 5)}s")
+    return result
+
+
+@app.post(
+    "/recognize/plate/store",
+    description="Detect, recognize, and store license plate images",
+    tags=["Recognize"],
+)
+async def recognize_plate_and_store(payload: AppDataRequest):
+    start = time.time()
+    result = await api_controller.recognize_plate_and_store(payload)
+    time_logger.info(f"plate_recognize_store {round(time.time() - start, 5)}s")
     return result
 
 

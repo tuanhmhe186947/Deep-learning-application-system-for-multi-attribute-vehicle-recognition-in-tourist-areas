@@ -1,8 +1,8 @@
-# Config model vehicle
+# License plate detection model config
 WEIGHT: "resources/weight/last_plate_hama_sz640.pt"
 CLASSES: [0]
 CONF: 0.7
 IMGSZ: 640
-DEVICE: "0"
+DEVICE: "cpu"
 AGNOSTIC_NMS: true
 HALF: false
